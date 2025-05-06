@@ -6,10 +6,10 @@ import * as bcrypt from 'bcrypt';
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    email: { 
-      type: String, 
-      required: true, 
-      unique: true, 
+    email: {
+      type: String,
+      required: true,
+      unique: true,
       validate: {
         validator: function (v: string) {
           // Kiểm tra email có hợp lệ không
@@ -19,13 +19,15 @@ const userSchema = new mongoose.Schema(
       }
     },
     password: { type: String, required: true },
-    role: { type: String, enum: ['student', 'instructor', 'admin'], required: true },
+    role: { type: String, enum: ['student', 'admin'], required: true },
+    isDeleted: { type: Boolean, default: false },
   },
+
   { timestamps: true }
 );
 
 // Mã hóa mật khẩu trước khi lưu vào MongoDB
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   const salt = await bcrypt.genSalt(10);  // Hash mật khẩu với 10 rounds
   this.password = await bcrypt.hash(this.password, salt);

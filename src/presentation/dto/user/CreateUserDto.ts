@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength, IsEnum } from 'class-validator';
 
-export class CreateUserDTO {
+export class CreateUserDto {
   @IsNotEmpty({ message: 'Name is required' })
   @IsString({ message: 'Name must be a string' })
   name: string;
@@ -15,6 +15,7 @@ export class CreateUserDTO {
 
   @IsNotEmpty({ message: 'Role is required' })
   @IsString({ message: 'Role must be a string' })
-  @IsEnum(['student', 'instructor'], { message: 'Role must be either student or instructor' })
-  role: 'student' | 'instructor'| 'admin';
+  @IsEnum(['student','admin'], { message: 'Role must be either student or instructor' })
+  role: 'student'  | 'admin';
+  isDeleted: boolean = false;
 }

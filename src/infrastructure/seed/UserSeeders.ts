@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { SeedUsers } from '../../core/use-cases/SeedUsers';
+import { SeedUsers } from '../../core/use-cases/SeedUsersUseCase';
 import { UserRepositoryImpl } from '../repositories/UserRepositoryImpl';
 
 @Injectable()
