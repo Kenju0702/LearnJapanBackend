@@ -5,54 +5,20 @@ import { DatabaseModule } from './infrastructure/databases/Database';
 import { UserController } from './presentation/controllers/UserController';
 import { GetAllUsers } from './core/use-cases/GetAllUsersUseCase';
 import { CreateUser } from './core/use-cases/CreateUserUseCase';
-import{ GetUserById } from './core/use-cases/GetUserByIdUseCase';
-import{ SearchUsers } from './core/use-cases/SearchUsersUseCase';
+import { GetUserById } from './core/use-cases/GetUserByIdUseCase';
+import { SearchUsers } from './core/use-cases/SearchUsersUseCase';
 import { UpdateUser } from './core/use-cases/UpdateUserUseCase';
 import { DeleteUser } from './core/use-cases/DeleteUserUseCase';
 import { UserRepositoryImpl } from './infrastructure/repositories/UserRepositoryImpl';
+import { UserUseCasesModule } from './core/use-cases/AppModuleUser';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    DatabaseModule,
+    DatabaseModule,UserUseCasesModule, // Đăng ký module chứa các use-case
   ],
   controllers: [UserController], // Đăng ký UserController
-  providers: [
-    {
-      provide: 'UserRepository',
-      useClass: UserRepositoryImpl,
-    },
-    {
-      provide: GetAllUsers,
-      useFactory: (userRepository: UserRepositoryImpl) => new GetAllUsers(userRepository),
-      inject: ['UserRepository'], // Inject UserRepository vào use-case
-    }, {
-      provide: CreateUser,
-      useFactory: (userRepository: UserRepositoryImpl) => new CreateUser(userRepository),
-      inject: ['UserRepository'], // Inject UserRepository vào use-case
-    },
-    {
-      provide: SearchUsers,
-      useFactory: (userRepository: UserRepositoryImpl) => new SearchUsers(userRepository),
-      inject: ['UserRepository'], // Inject UserRepository vào use-case
-    },
-    {
-      provide: GetUserById,
-      useFactory: (userRepository: UserRepositoryImpl) => new GetUserById(userRepository),
-      inject: ['UserRepository'], // Inject UserRepository vào use-case
-    },
-    {
-      provide: UpdateUser,
-      useFactory: (userRepository: UserRepositoryImpl) => new UpdateUser(userRepository),
-      inject: ['UserRepository'], // Inject UserRepository vào use-case
-    },
-    {
-      provide: DeleteUser,
-      useFactory: (userRepository: UserRepositoryImpl) => new DeleteUser(userRepository),
-      inject: ['UserRepository'], // Inject UserRepository vào use-case
-    },
-   
-  ],
+
 })
 export class AppModule implements OnModuleInit {
   constructor(private readonly configService: ConfigService) { }

@@ -2,13 +2,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export default class Logger {
-  private static logToFile(message: string): void {
+  private static async logToFile(message: string): Promise<void> {
     const logMessage = `${new Date().toISOString()} - ${message}\n`;
     const logFilePath = path.join(__dirname, 'app.log');
 
     try {
-      // Kiểm tra tệp log và thêm mới vào
-      fs.appendFileSync(logFilePath, logMessage, 'utf8');
+      // Ghi log vào tệp không đồng bộ
+      await fs.promises.appendFile(logFilePath, logMessage, 'utf8');
     } catch (error) {
       console.error('Error writing to log file', error);
     }

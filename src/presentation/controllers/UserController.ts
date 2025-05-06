@@ -1,14 +1,15 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Patch, Post, Query } from '@nestjs/common'
-import { GetAllUsers } from '../../core/use-cases/GetAllUsersUseCase'
-import { CreateUser } from '../../core/use-cases/CreateUserUseCase'
-import { GetUserById } from '../../core/use-cases/GetUserByIdUseCase'
-import { SearchUsers } from '../../core/use-cases/SearchUsersUseCase'
-import { UpdateUser } from '../../core/use-cases/UpdateUserUseCase'
-import { DeleteUser } from '../../core/use-cases/DeleteUserUseCase'
-import { User } from '../../core/entities/User'
-import { CreateUserDto } from '../dto/user/CreateUserDto'
-import { SearchUserDto } from '../dto/user/SearchUserDto'
-import { UpdateUserDto } from '../dto/user/UpdateUserDto'
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Patch, Post, Query } from '@nestjs/common';
+import { GetAllUsers } from '../../core/use-cases/GetAllUsersUseCase';
+import { CreateUser } from '../../core/use-cases/CreateUserUseCase';
+import { GetUserById } from '../../core/use-cases/GetUserByIdUseCase';
+import { SearchUsers } from '../../core/use-cases/SearchUsersUseCase';
+import { UpdateUser } from '../../core/use-cases/UpdateUserUseCase';
+import { DeleteUser } from '../../core/use-cases/DeleteUserUseCase';
+import { User } from '../../core/entities/User';
+import { CreateUserDto } from '../dto/user/CreateUserDto';
+import { SearchUserDto } from '../dto/user/SearchUserDto';
+import { UpdateUserDto } from '../dto/user/UpdateUserDto';
+import Logger from '../../shared/utils/Logger';  // Đảm bảo import đúng Logger
 
 @Controller('users')
 export class UserController {
@@ -24,59 +25,87 @@ export class UserController {
   @Get()
   async getUsers(): Promise<User[]> {
     try {
-      const users = await this.getAllUsers.execute()
-      return users
+      const users = await this.getAllUsers.execute();
+      Logger.log('Fetched all users');
+      return users;
     } catch (error) {
-      throw new HttpException('Failed to retrieve users', HttpStatus.INTERNAL_SERVER_ERROR)
+      Logger.error('Failed to retrieve users: ' + error.message);
+      throw new HttpException('Failed to retrieve users', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
   @Get('search')
   async search(@Query() query: SearchUserDto): Promise<User[]> {
-    console.log('Query received:', query);  // Kiểm tra query sau khi đã parse qua DTO
-    return await this.searchUsers.execute(query);
+    Logger.log('Search query received: ' + JSON.stringify(query)); 
+    try {
+      const users = await this.searchUsers.execute(query);
+      Logger.log(`Found ${users.length} users matching search criteria.`);
+      return users;
+    } catch (error) {
+      Logger.error('Error during search: ' + error.message);
+      throw new HttpException('Search failed', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
-
 
   @Post()
   async CreateUser(@Body() body: CreateUserDto): Promise<User> {
     try {
-      console.log('Received body:', body); // Kiểm tra body sau khi đã parse qua DTO
-      const user = await this.createUser.execute(body); // Gọi use-case CreateUser
+      Logger.log('Received body to create user: ' + JSON.stringify(body));  // Log the received body
+      const user = await this.createUser.execute(body);
+      Logger.log('User created successfully: ' + user.id);
       return user;
     } catch (error) {
+      Logger.error('Failed to create user: ' + error.message);
       throw new HttpException('Failed to create user', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-
-
   @Get(':id')
   async GetUserById(@Param('id') id: string): Promise<User> {
     try {
-      const user = await this.getUserById.execute(id)
+      Logger.log(`Fetching user by ID: ${id}`);
+      const user = await this.getUserById.execute(id);
       if (!user) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND)
+        Logger.warn(`User not found: ${id}`);
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
-      return user
+      return user;
     } catch (error) {
-      throw new HttpException('Failed to retrieve user', HttpStatus.INTERNAL_SERVER_ERROR)
+      Logger.error(`Failed to retrieve user with ID ${id}: ${error.message}`);
+      throw new HttpException('Failed to retrieve user', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
   @Patch(':id') // hoặc @Put(':id')
   async UpdateUser(
     @Param('id') id: string,
     @Body() userData: Partial<UpdateUserDto>,
   ): Promise<User | null> {
-    return await this.updateUser.execute(id, userData);
+    try {
+      Logger.log(`Updating user with ID: ${id}`);
+      const user = await this.updateUser.execute(id, userData);
+      if (!user) {
+        Logger.warn(`User not found for update: ${id}`);
+      }
+      return user;
+    } catch (error) {
+      Logger.error(`Failed to update user with ID ${id}: ${error.message}`);
+      throw new HttpException('Failed to update user', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
-  
+
   @Patch(':id/delete')
-  async updateIsDeleted( @Param('id') id: string ): Promise<User | null> {
-    const user = await this.deleteUser.execute(id); // Chỉ truyền id
-    return user;
+  async updateIsDeleted(@Param('id') id: string): Promise<User | null> {
+    try {
+      Logger.log(`Deleting user with ID: ${id}`);
+      const user = await this.deleteUser.execute(id);
+      if (!user) {
+        Logger.warn(`User not found for deletion: ${id}`);
+      }
+      return user;
+    } catch (error) {
+      Logger.error(`Failed to delete user with ID ${id}: ${error.message}`);
+      throw new HttpException('Failed to delete user', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
-  
-
-
-
 }
