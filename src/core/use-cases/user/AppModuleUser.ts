@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { UserRepositoryImpl } from '../../infrastructure/repositories/UserRepositoryImpl';
+import { UserRepositoryImpl } from '../../../infrastructure/repositories/UserRepositoryImpl';
 import { GetAllUsers } from './GetAllUsersUseCase';
 import { CreateUser } from './CreateUserUseCase';
 import { GetUserById } from './GetUserByIdUseCase';

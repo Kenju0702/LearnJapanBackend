@@ -3,21 +3,16 @@ import mongoose from 'mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from './infrastructure/databases/Database';
 import { UserController } from './presentation/controllers/UserController';
-import { GetAllUsers } from './core/use-cases/GetAllUsersUseCase';
-import { CreateUser } from './core/use-cases/CreateUserUseCase';
-import { GetUserById } from './core/use-cases/GetUserByIdUseCase';
-import { SearchUsers } from './core/use-cases/SearchUsersUseCase';
-import { UpdateUser } from './core/use-cases/UpdateUserUseCase';
-import { DeleteUser } from './core/use-cases/DeleteUserUseCase';
-import { UserRepositoryImpl } from './infrastructure/repositories/UserRepositoryImpl';
-import { UserUseCasesModule } from './core/use-cases/AppModuleUser';
+import { UserUseCasesModule } from './core/use-cases/user/AppModuleUser';
+import { AuthUseCaseAppModule } from './core/use-cases/auth/AppModuleAuth';
+import { AuthController } from './presentation/controllers/AuthController';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    DatabaseModule,UserUseCasesModule, // Đăng ký module chứa các use-case
+    DatabaseModule,UserUseCasesModule,AuthUseCaseAppModule, // Đăng ký module chứa các use-case
   ],
-  controllers: [UserController], // Đăng ký UserController
+  controllers: [UserController,AuthController], // Đăng ký UserController
 
 })
 export class AppModule implements OnModuleInit {
@@ -40,7 +35,6 @@ export class AppModule implements OnModuleInit {
         console.error('MongoDB connection is not ready. Seeding aborted.');
         return;
       }
-
       // Bạn có thể gọi seeder ở đây nếu cần
       // const userSeeder = new UserSeeder(new UserRepositoryImpl());
       // await userSeeder.onModuleInit();

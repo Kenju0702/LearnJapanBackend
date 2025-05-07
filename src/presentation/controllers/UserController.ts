@@ -1,10 +1,10 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Patch, Post, Query } from '@nestjs/common';
-import { GetAllUsers } from '../../core/use-cases/GetAllUsersUseCase';
-import { CreateUser } from '../../core/use-cases/CreateUserUseCase';
-import { GetUserById } from '../../core/use-cases/GetUserByIdUseCase';
-import { SearchUsers } from '../../core/use-cases/SearchUsersUseCase';
-import { UpdateUser } from '../../core/use-cases/UpdateUserUseCase';
-import { DeleteUser } from '../../core/use-cases/DeleteUserUseCase';
+import { GetAllUsers } from '../../core/use-cases/user/GetAllUsersUseCase';
+import { CreateUser } from '../../core/use-cases/user/CreateUserUseCase';
+import { GetUserById } from '../../core/use-cases/user/GetUserByIdUseCase';
+import { SearchUsers } from '../../core/use-cases/user/SearchUsersUseCase';
+import { UpdateUser } from '../../core/use-cases/user/UpdateUserUseCase';
+import { DeleteUser } from '../../core/use-cases/user/DeleteUserUseCase';
 import { User } from '../../core/entities/User';
 import { CreateUserDto } from '../dto/user/CreateUserDto';
 import { SearchUserDto } from '../dto/user/SearchUserDto';

@@ -125,16 +125,16 @@ export class UserRepositoryImpl implements UserRepository {
     }
   }
 
-  async findByEmail(email: string): Promise<boolean> {
+  async findByEmail(email: string): Promise<User | null> {
     try {
       const result = await this.search({ email });
-      const [user] = result.data;
-      Logger.log(`User found: ${user ? user : 'No user found'}`);
+      const [user] = result;
 
-      return user ? true : false;
+      Logger.log(`User found: ${user ? JSON.stringify(user) : 'No user found'}`);
+      return user || null;
     } catch (error) {
       Logger.error(`Error finding user by email: ${error.message}\n${error.stack}`);
-      return false; // Có thể trả về false nếu lỗi xảy ra
+      return null;
     }
   }
 

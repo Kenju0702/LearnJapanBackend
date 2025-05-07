@@ -1,5 +1,5 @@
-import { UserRepository } from '../interfaces/UserRepository'
-import { User } from '../entities/User'
+import { UserRepository } from '../../interfaces/UserRepository'
+import { User } from '../../entities/User'
 export class UpdateUser {
     constructor(private readonly userRepository: UserRepository) { }
     async execute(id: string, user: Partial<User>): Promise<User | null> {

@@ -1,5 +1,5 @@
-import { UserRepository } from '../interfaces/UserRepository'
-import { User } from '../entities/User'
+import { UserRepository } from '../../interfaces/UserRepository'
+import { User } from '../../entities/User'
 export class SearchUsers {
     constructor(private readonly userRepository: UserRepository) {}
   

@@ -1,4 +1,4 @@
-import { UserRepository } from '../interfaces/UserRepository';
+import { UserRepository } from '../../interfaces/UserRepository';
 
 export class SeedUsers {
     constructor(private readonly userRepository: UserRepository) { }
