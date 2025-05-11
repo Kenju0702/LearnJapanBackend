@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UserRepository } from '../../interfaces/UserRepository';  // Import UserRepository
 import { RegisterDto } from '../../../presentation/dto/auth/RegisterAuthDto';
 import { User } from '../../entities/User';  // Import User entity
@@ -10,17 +10,16 @@ export class RegisterUseCase {
 
   async execute(registerDto: RegisterDto): Promise<User> {
     // Hash mật khẩu trước khi lưu vào database
-    const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
     // Tạo người dùng mới
     const newUser: Omit<User, 'id'> = {
       name: registerDto.name,
       email: registerDto.email,
-      password: hashedPassword,
-      role: registerDto.role,
+      password: registerDto.password,
+      role: 'student',
       isDeleted: false,
     };
-
+     Logger.log('Registering new user:', newUser);
     // Lưu vào database
     const createdUser = await this.userRepository.create(newUser);
     return createdUser;

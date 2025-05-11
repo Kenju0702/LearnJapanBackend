@@ -127,27 +127,34 @@ export class UserRepositoryImpl implements UserRepository {
 
   async findByEmail(email: string): Promise<User | null> {
     try {
-      const result = await this.search({ email });
-      const [user] = result;
-
-      Logger.log(`User found: ${user ? JSON.stringify(user) : 'No user found'}`);
-      return user || null;
+      Logger.log(`Searching for user with email: ${email}`);
+      const user = await UserModel.findOne({ email })
+        .select('email password name role isDeleted');
+  
+      if (!user) {
+        Logger.warn(`User with email ${email} not found.`);
+        return null;
+      }
+  
+      // Chuyển đổi Document thành User
+      return new User(user._id.toString(), user.name, user.email, user.password, user.role, user.isDeleted);
     } catch (error) {
       Logger.error(`Error finding user by email: ${error.message}\n${error.stack}`);
       return null;
     }
   }
+  
+  
 
   async create(user: Omit<User, 'id'>): Promise<User> {
     try {
-      // Kiểm tra dữ liệu người dùng trước khi tạo
-      const hashedPassword = await bcrypt.hash(user.password, 10);
-      const createdUser = await UserModel.create({ ...user, password: hashedPassword });
+      // Không cần phải băm mật khẩu ở đây nữa
+      const createdUser = await UserModel.create(user);  // Sử dụng user gốc, không băm lại
       return new User(
         createdUser._id.toString(),
         createdUser.name,
         createdUser.email,
-        createdUser.password,
+        createdUser.password,  // password đã băm trong pre-save hook
         createdUser.role as 'student' | 'admin',
         createdUser.isDeleted || false,
       );

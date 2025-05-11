@@ -1,12 +1,22 @@
-// src/modules/auth/auth.module.ts
 import { Module } from '@nestjs/common';
 import { AuthController } from '../../../presentation/controllers/AuthController';
 import { UserRepositoryImpl } from '../../../infrastructure/repositories/UserRepositoryImpl';
 import { LoginUseCase } from '../auth/LoginUseCase';
 import { RegisterUseCase } from '../auth/RegisterUseCase';
+import { JwtModule, JwtService } from '@nestjs/jwt';  // Import JwtModule
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [],
+  imports: [
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1h' },  // Token hết hạn sau 1 giờ
+      }),
+      inject: [ConfigService],
+    }),
+  ],
   providers: [
     {
       provide: 'UserRepository',
@@ -14,8 +24,8 @@ import { RegisterUseCase } from '../auth/RegisterUseCase';
     },
     {
       provide: LoginUseCase,
-      useFactory: (userRepository: UserRepositoryImpl) => new LoginUseCase(userRepository),
-      inject: ['UserRepository'],
+      useFactory: (userRepository: UserRepositoryImpl, jwtService: JwtService) => new LoginUseCase(userRepository, jwtService),
+      inject: ['UserRepository', JwtService],
     },
     {
       provide: RegisterUseCase,
