@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AuthController } from '../../../presentation/controllers/AuthController';
-import { UserRepositoryImpl } from '../../../infrastructure/repositories/UserRepositoryImpl';
-import { LoginUseCase } from '../auth/LoginUseCase';
-import { RegisterUseCase } from '../auth/RegisterUseCase';
+import { AuthController } from '../presentation/controllers/AuthController';
+import { UserRepositoryImpl } from '../infrastructure/repositories/UserRepositoryImpl';
+import { LoginUseCase } from '../core/use-cases/auth/LoginUseCase';
+import { RegisterUseCase } from '../core/use-cases/auth/RegisterUseCase';
 import { JwtModule, JwtService } from '@nestjs/jwt';  // Import JwtModule
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
