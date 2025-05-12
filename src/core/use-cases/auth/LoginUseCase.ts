@@ -3,6 +3,7 @@ import { UserRepository } from '../../interfaces/UserRepository';
 import { LoginDto } from '../../../presentation/dto/auth/LoginAuthDto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';  // Import JwtService
+import { log } from 'console';
 
 @Injectable()
 export class LoginUseCase {
@@ -29,9 +30,8 @@ export class LoginUseCase {
     // Tạo JWT token với payload (thông tin cần thiết trong token)
     const payload = { sub: user.id, email: user.email, role: user.role };
     const token = this.jwtService.sign(payload);
-
-    Logger.log(`JWT token created for user: ${loginDto.email}`);
-
+    Logger.log(`payload: ${JSON.stringify(payload)}`);
+    Logger.log(`Token created: ${token}`);
     return token;  // Trả về token đã tạo
   }
 }

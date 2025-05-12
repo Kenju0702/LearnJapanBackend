@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { GetAllUsers } from '../../core/use-cases/user/GetAllUsersUseCase';
 import { CreateUser } from '../../core/use-cases/user/CreateUserUseCase';
 import { GetUserById } from '../../core/use-cases/user/GetUserByIdUseCase';
@@ -10,6 +10,9 @@ import { CreateUserDto } from '../dto/user/CreateUserDto';
 import { SearchUserDto } from '../dto/user/SearchUserDto';
 import { UpdateUserDto } from '../dto/user/UpdateUserDto';
 import Logger from '../../shared/utils/Logger';  // Đảm bảo import đúng Logger
+import { Roles } from 'src/shared/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/shared/auth/jwt-auth.guard';
+import { RolesGuard } from 'src/shared/auth/guards/roles.guard';
 
 @Controller('users')
 export class UserController {
@@ -22,6 +25,21 @@ export class UserController {
     private readonly deleteUser: DeleteUser,
   ) { }
 
+   // Cấu hình route chỉ cho phép 'admin' truy cập
+   @Get('admin')
+   @UseGuards(JwtAuthGuard, RolesGuard)
+   @Roles('admin')
+   getAdminUsers() {
+     return 'Admin users only'
+   }
+ 
+   // Cấu hình route chỉ cho phép 'student' truy cập
+   @Get('student')
+   @UseGuards(JwtAuthGuard, RolesGuard)
+   @Roles('student')
+   getStudentUsers() {
+     return 'Student users only'
+   }
   @Get()
   async getUsers(): Promise<User[]> {
     try {

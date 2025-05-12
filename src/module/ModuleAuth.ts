@@ -5,7 +5,7 @@ import { LoginUseCase } from '../core/use-cases/auth/LoginUseCase';
 import { RegisterUseCase } from '../core/use-cases/auth/RegisterUseCase';
 import { JwtModule, JwtService } from '@nestjs/jwt';  // Import JwtModule
 import { ConfigModule, ConfigService } from '@nestjs/config';
-
+import { JwtStrategy } from 'src/shared/auth/jwt.strategy';
 @Module({
   imports: [
     JwtModule.registerAsync({
@@ -18,6 +18,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
   ],
   providers: [
+    JwtStrategy,
     {
       provide: 'UserRepository',
       useClass: UserRepositoryImpl,
