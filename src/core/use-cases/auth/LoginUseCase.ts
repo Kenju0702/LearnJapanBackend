@@ -3,7 +3,6 @@ import { UserRepository } from '../../interfaces/UserRepository';
 import { LoginDto } from '../../../presentation/dto/auth/LoginAuthDto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';  // Import JwtService
-import { log } from 'console';
 
 @Injectable()
 export class LoginUseCase {
